@@ -4,10 +4,16 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const config = require('./src/config/config');
+const morgan = require('./src/config/morgan');
 
-const routes = require('./src/routes/v1/index');
+const routes = require('./src/routes/v1');
+const { errorConverter, errorHandler } = require('./src/middlewares/error');
+const ApiError = require('./src/utils/ApiError');
 
 const app = express();
+
+app.use(morgan.successHandler);
+app.use(morgan.errorHandler);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -48,24 +54,16 @@ app.use('/auth/v1', routes);
 
 
 
-
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
+// send back a 404 error for any unknown api request
+app.use((req, res, next) => {
+  next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
 });
 
-// error handler
-app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+// convert error to ApiError, if needed
+app.use(errorConverter);
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
-
-
+// handle error
+app.use(errorHandler);
 
 
 module.exports = app;
