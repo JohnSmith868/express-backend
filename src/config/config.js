@@ -11,6 +11,8 @@ const envVarsSchema = Joi.object()
         MYSQL_USER_NAME: Joi.string().required().description('MySQL username.'),
         MYSQL_PASSWORD: Joi.string().required().description('MySQL password.'),
         MYSQL_HOST: Joi.string().required().description('MySQL host.'),
+        JWT_SECRET: Joi.string().required().description('JWT secret'),
+        JWT_TOKEN_EXPIRATION_DAYS: Joi.number().required().description('Token expiration days.'),
     })
     .unknown();
 
@@ -22,10 +24,14 @@ if (error) {
 
 module.exports = {
     env: envVars.NODE_ENV,
-    mysql:{
+    mysql: {
         url: envVars.MYSQL_HOST,
         username: envVars.MYSQL_USER_NAME,
         password: envVars.MYSQL_PASSWORD,
         database: envVars.MYSQL_DBNAME,
+    },
+    jwt: {
+        secret: envVars.JWT_SECRET,
+        expiration: envVars.JWT_TOKEN_EXPIRATION_DAYS,
     }
 };

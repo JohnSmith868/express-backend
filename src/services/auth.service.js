@@ -32,9 +32,9 @@ const createClinic = async (req) => {
   await new Promise((res, rej) => {
     req.mysqlpool.getConnection(function (err, connection) {
       if (err) throw err;
-      connection.query(`INSERT INTO clinics (email,phone,address, password) VALUES (?,?,?,md5(?))`, [email,phone,address,password], function (error, result) {
+      connection.query(`INSERT INTO clinics (email,phone,address, password) VALUES (?,?,?,md5(?))`, [email, phone, address, password], function (error, result) {
         if (error) throw error;
-        
+
         if (result.affectedRows == 1) {
           connection.release();
           if (error) throw error;
@@ -45,10 +45,42 @@ const createClinic = async (req) => {
       });
     });
   });
-  
+
+  return clinicId;
+};
+
+
+/**
+ * Login with username and password
+ * @param {Object} req
+ * @returns {Promise<clinicId>}
+ */
+const login = async (req) => {
+  const { email, password } = req.body;
+
+  let clinicId;
+  await new Promise((resolve, reject) => {
+    req.mysqlpool.getConnection(function (err, connection) {
+      if (err) throw err;
+      connection.query(`SELECT * FROM clinics WHERE email = ? AND password = md5(?);`, [email, password], function (error, results) {
+        if (error) throw error;
+
+        if (results.length > 0) {
+          connection.release();
+          if (error) throw error;
+          clinicId = results[0].clinicId;
+          resolve();
+        }
+        reject(new ApiError(httpStatus.BAD_REQUEST, 'Incorrect email or password'));
+      });
+    });
+  });
+
+
   return clinicId;
 };
 
 module.exports = {
   createClinic,
+  login
 };
