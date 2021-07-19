@@ -16,7 +16,6 @@ const validate = (schema) => (req, res, next) => {
     
     return next(new ApiError(httpStatus.BAD_REQUEST, errorMessage));
   }
-  console.log('no error')
   Object.assign(req, value);
   return next();
 };

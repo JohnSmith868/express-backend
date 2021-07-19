@@ -10,6 +10,7 @@ const routes = require('./src/routes/v1');
 const { jwtStrategy } = require('./src/config/passport');
 const { errorConverter, errorHandler } = require('./src/middlewares/error');
 const ApiError = require('./src/utils/ApiError');
+const httpStatus = require('http-status');
 const dbPool = require('./src/middlewares/db');
 
 const app = express();
