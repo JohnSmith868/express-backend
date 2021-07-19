@@ -8,7 +8,7 @@ const router = express.Router();
 
 // jwt
 router.route('/uploadRecord').post(auth('getMe'), validate(consultationValidation.uploadRecord), consultationController.uploadRecord);
-// router.route('/getRecords').get(auth('getMe'), validate(courseValidation.courseAttempted), courseController.courseAttempted);
+router.route('/getRecords').get(auth('getMe'), validate(consultationValidation.getRecords), consultationController.getRecords);
 
 
 

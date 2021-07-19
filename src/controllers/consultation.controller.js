@@ -3,7 +3,7 @@ const catchAsync = require('../utils/catchAsync');
 const { consultationService } = require('../services');
 
 const uploadRecord = catchAsync(async (req, res) => {
-    console.log('controller')
+
     const { clinicId } = req.clinic;
     const { clinic,
         doctor_name,
@@ -18,10 +18,13 @@ const uploadRecord = catchAsync(async (req, res) => {
     res.status(httpStatus.CREATED).send({ resp: { consultationId }, message: 'create consultation record succeed.' });
 });
 
-const queryRecords = catchAsync(async (req, res) => {
-
+const getRecords = catchAsync(async (req, res) => {
+    const { clinicId } = req.clinic;
+    const { from, to, limit, offset } = req.query;
+    const consultationRecords = await consultationService.getRecords(clinicId, from, to, limit, offset);
+    res.send({ resp: { consultationRecords }, message: 'get consultation records succeed.' });
 });
 module.exports = {
     uploadRecord,
-    queryRecords,
+    getRecords,
 };

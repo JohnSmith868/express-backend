@@ -14,6 +14,17 @@ const uploadRecord = {
     }),
 };
 
+const getRecords = {
+    query: Joi.object().keys({
+        from: Joi.date().required(),
+        to: Joi.date().required(),
+        limit: Joi.number().required(),
+        offset: Joi.number().required(),
+    }),
+};
+
+
 module.exports = {
     uploadRecord,
+    getRecords
 };

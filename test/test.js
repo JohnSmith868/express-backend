@@ -16,16 +16,16 @@ describe('/POST /auth/v1/register', () => {
         };
 
         chai.request(app)
-        .post('/auth/v1/register')
-        .send(clinic)
-        .end((err, res) => {
-            res.should.have.status(201);
-            res.body.should.be.a('object');
-            res.body.should.have.property('resp').and.have.property('clinicId');
-            res.body.should.have.property('message');
-            res.body.should.have.property('message').eq('create clinic succeed.');
-            done();
-        });
+            .post('/auth/v1/register')
+            .send(clinic)
+            .end((err, res) => {
+                res.should.have.status(201);
+                res.body.should.be.a('object');
+                res.body.should.have.property('resp').and.have.property('clinicId');
+                res.body.should.have.property('message');
+                res.body.should.have.property('message').eq('create clinic succeed.');
+                done();
+            });
     });
 });
 
@@ -38,19 +38,19 @@ describe('/POST /auth/v1/login', () => {
         };
 
         chai.request(app)
-        .post('/auth/v1/login')
-        .send(clinic)
-        .end((err, res) => {
-            res.should.have.status(200);
-            res.body.should.be.a('object');
-            res.body.should.have.property('resp').and.have.property('token');
-            res.body.should.have.property('resp').and.have.property('clinicId');
-            res.body.should.have.property('message');
-            res.body.should.have.property('message').eq('login succeed.');
-            console.log(res.body.resp.token)
-            token = res.body.resp.token;
-            done();
-        });
+            .post('/auth/v1/login')
+            .send(clinic)
+            .end((err, res) => {
+                res.should.have.status(200);
+                res.body.should.be.a('object');
+                res.body.should.have.property('resp').and.have.property('token');
+                res.body.should.have.property('resp').and.have.property('clinicId');
+                res.body.should.have.property('message');
+                res.body.should.have.property('message').eq('login succeed.');
+                console.log(res.body.resp.token)
+                token = res.body.resp.token;
+                done();
+            });
     });
 });
 
@@ -69,17 +69,44 @@ describe('/POST /consultation/v1/consultations/uploadRecord', () => {
         };
 
         chai.request(app)
-        .post('/consultation/v1/consultations/uploadRecord')
-        .set({ "Authorization": `Bearer ${token}` })
-        .send(consultation)
-        .end((err, res) => {
-            if(err) console.log(err)
-            res.should.have.status(201);
-            res.body.should.be.a('object');
-            res.body.should.have.property('resp').and.have.property('consultationId');
-            res.body.should.have.property('message');
-            res.body.should.have.property('message').eq('create consultation record succeed.');
-            done();
-        });
+            .post('/consultation/v1/consultations/uploadRecord')
+            .set({ "Authorization": `Bearer ${token}` })
+            .send(consultation)
+            .end((err, res) => {
+                if (err) console.log(err)
+                res.should.have.status(201);
+                res.body.should.be.a('object');
+                res.body.should.have.property('resp').and.have.property('consultationId');
+                res.body.should.have.property('message');
+                res.body.should.have.property('message').eq('create consultation record succeed.');
+                done();
+            });
+    });
+});
+
+
+describe('/get /consultation/v1/consultations/getRecords', () => {
+    it('it should get a consultation record.', (done) => {
+        const consultation = {
+            from: '2021-01-01 00:00:00',
+            to: '2021-01-25 23:59:59',
+            limit: 20,
+            offset: 0
+        };
+
+        chai.request(app)
+            .get('/consultation/v1/consultations/getRecords')
+            .query(consultation)
+            .set({ "Authorization": `Bearer ${token}` })
+            .send(consultation)
+            .end((err, res) => {
+                if (err) console.log(err)
+                res.should.have.status(200);
+                res.body.should.be.a('object');
+                res.body.should.have.property('resp').and.have.property('consultationRecords');
+                res.body.should.have.property('message');
+                res.body.should.have.property('message').eq('get consultation records succeed.');
+                done();
+            });
     });
 });
