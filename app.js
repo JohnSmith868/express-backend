@@ -5,10 +5,12 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const config = require('./src/config/config');
 const morgan = require('./src/config/morgan');
-
+const passport = require('passport');
 const routes = require('./src/routes/v1');
+const { jwtStrategy } = require('./src/config/passport');
 const { errorConverter, errorHandler } = require('./src/middlewares/error');
 const ApiError = require('./src/utils/ApiError');
+const dbPool = require('./src/middlewares/db');
 
 const app = express();
 
@@ -25,32 +27,23 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// jwt authentication
+app.use(passport.initialize());
+passport.use('jwt', jwtStrategy);
 
-//mysql connection
-const mysql = require('mysql');
 
-const pool = mysql.createPool({
-  host: config.mysql.url,
-  user: config.mysql.username,
-  password: config.mysql.password,
-  database: config.mysql.database,
-
-});
-
-pool.getConnection(function (err, connection) {
-  if (err) throw err;
-  console.log('mysql database connected;');
-
-});
 
 //mysql state
 app.use(function (req, res, next) {
-  req.mysqlpool = pool;
+  req.mysqlpool = dbPool;
   next();
 });
 
 //auth services
 app.use('/auth/v1', routes);
+
+// consultation services
+app.use('/consultation/v1', routes);
 
 
 
