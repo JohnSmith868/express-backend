@@ -12,6 +12,11 @@ docker-compose up -d
 ```
 server will run at 3000 port
 
+## SQL file 
+```
+/sql/init.sql
+```
+
 ## Structure
 ```
 src
@@ -119,7 +124,7 @@ Error example
 }
 ```
 
-#### POST localhost:3000/auth/v1/login
+#### POST localhost:3000/consultation/v1/consultations/uploadRecord
 ```
 curl --request POST -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjYsImlhdCI6MTYyNjYyODcyNywiZXhwIjoxNjI3MDYwNzI3fQ.9EqHGmcKQnaRCv9jdSUIEJOR_vYVSsEO_9MTanNAaEo" --data "{\"clinic\":\"Happy clinic\",\"doctor_name\":\"dr. sam\",\"patient_name\":\"Jim Chau\",\"diagnosis\":\"headaches\",\"medication\":\"neurontin\",\"consultation_fee\":232,\"date\":\"2021-01-01 15:20:23\",\"follow_up\":true}" http://localhost:3000/consultation/v1/consultations/uploadRecord
 ```
@@ -146,6 +151,67 @@ Respond example
         "consultationId": 11
     },
     "message": "create consultation record succeed."
+}
+```
+
+Error example
+
+```JSON
+{
+    "code": 401,
+    "message": "Please authenticate"
+}
+```
+
+#### GET localhost:3000/consultation/v1/consultations/getRecords
+
+```
+curl --request GET -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjYsImlhdCI6MTYyNjYyODcyNywiZXhwIjoxNjI3MDYwNzI3fQ.9EqHGmcKQnaRCv9jdSUIEJOR_vYVSsEO_9MTanNAaEo" "http://localhost:3000/consultation/v1/consultations/getRecords?from=2020-01-01%2000%3A00%3A00&to=2021-01-25%2023%3A59%3A59&limit=20&offset=0"
+```
+
+| header name | example value |
+| --- | ---|
+|Authorization| Bearer {JWT token}|
+
+| query string name | type | example value |
+| --- | --- | ---|
+| from | date | 2020-01-01%2000%3A00%3A00 |
+| to | date | 2021-01-25%2023%3A59%3A59&|
+| limit | number | 20|
+|offset| number| 0 |
+
+Respond example
+```JSON
+{
+    "resp": {
+        "consultationRecords": [
+            {
+                "consultationId": 11,
+                "clinicId": 6,
+                "clinic": "test0.324234@tessdsadffsst0.3324242.com",
+                "doctorName": "dr. sam",
+                "patientName": "Jim Chau",
+                "diagnosis": "headaches",
+                "medication": "neurontin",
+                "consultationFee": 232,
+                "date": "2021-01-01T15:20:23.000Z",
+                "followUp": 1
+            },
+            {
+                "consultationId": 12,
+                "clinicId": 6,
+                "clinic": "test0.324234@tessdsadffsst0.3324242.com",
+                "doctorName": "dr. sam",
+                "patientName": "Jim Chau",
+                "diagnosis": "headaches",
+                "medication": "neurontin",
+                "consultationFee": 232,
+                "date": "2021-01-01T15:20:23.000Z",
+                "followUp": 1
+            }
+        ]
+    },
+    "message": "get consultation records succeed."
 }
 ```
 
