@@ -1,32 +1,22 @@
-version: '3.8'
-services: 
+version: '3.2'
+services:
   mysqldb:
-    image: mysql:latest
+    image: mysql:5.7
     env_file: ./.env
-    command: npm start
     environment:
       MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
       MYSQL_DATABASE: $MYSQL_DBNAME
       ports:
         3306:3306
-      volumes:
-        ./sql:/docker-entrypoint-initdb.d
+    volumes:
+        - ./sql:/docker-entrypoint-initdb.d
   app:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    image: express-backend
-    env_file: ./.env
+    image: john/express-backend
     ports:
-      - 3000:3000
-    volumes: 
-      - .:/app/
-      - app/node_modules
+           -  3000:3000
     depends_on:
       - mysqldb
     stdin_open: true
     tty: true
-
-volumes: 
-  db-config:
-  db-data:
+    container_name: express-backend-app
+    command: /bin/bash -c "npm install && npm start"
