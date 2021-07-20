@@ -21,13 +21,22 @@ const uploadRecord = async (clinicId, clinic, doctorName, patientName, diagnosis
   await new Promise((resolve, reject) => {
 
     pool.getConnection((err, connection) => {
-      if (err) throw new ApiError(httpStatus.BAD_REQUEST, 'sql error.');
-      connection.query('INSERT INTO consultationRecords (clinicId, clinic, doctorName, patientName, diagnosis, medication, consultationFee, date, followUp) VALUES (?,?,?,?,?,?,?,?,?)',
+      if (err) {
+        console.log(err);
+        reject();
+      }
+      connection.query('INSERT INTO consultationrecords (clinicId, clinic, doctorName, patientName, diagnosis, medication, consultationFee, date, followUp) VALUES (?,?,?,?,?,?,?,?,?)',
         [clinicId, clinic, doctorName, patientName, diagnosis, medication, consultationFee, date, followUp],
         function (err, results) {
-          if (err) reject(new ApiError(httpStatus.BAD_REQUEST, `sql error. ${err}`));
+          if (err) {
+            console.log(err);
+            reject();
+          }
           connection.release();
-          if (err) throw new ApiError(httpStatus.BAD_REQUEST, 'sql error.');
+          if (err) {
+            console.log(err);
+            reject();
+          }
           consultationId = results.insertId;
           resolve();
 
@@ -56,7 +65,7 @@ const uploadRecord = async (clinicId, clinic, doctorName, patientName, diagnosis
 const getRecords = async (clinicId, from, to, limit, offset) => {
   let consultationRecords = [];
   await new Promise((resolve, reject) => {
-    
+
     pool.getConnection((err, connection) => {
       if (err) throw new ApiError(httpStatus.BAD_REQUEST, 'sql error.');
       connection.query('SELECT * from consultationrecords WHERE  date > ? AND date < ? AND clinicId = ? LIMIT ? OFFSET ?',
