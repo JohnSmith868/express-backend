@@ -8,7 +8,7 @@ cp .env_backup .env
 docker pull mysql:5.7
 docker pull node:latest
 docker build -t john/express-backend .
-docker-compose up -d
+docker-compose up
 ```
 server will run at 3000 port
 
